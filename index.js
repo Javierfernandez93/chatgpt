@@ -30,6 +30,8 @@ app.get("/train", async (req, res) => {
 app.get("/ask", async (req, res) => {
   let { query } = req.query;
 
+  console.log(`ask ${query}`)
+  
   const response = await ask(query)
 
   res.status(200).send(response);
