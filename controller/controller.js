@@ -1,19 +1,17 @@
 import _config from '../config/config.json' assert {type: 'json'};
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import dotenv, { config } from "dotenv";
 import fs from "fs"
+import fetch from 'node-fetch';
 
 dotenv.config();
 
-const configuration = new Configuration({
-    organization: process.env.ORGANIZATION,
-    apiKey: process.env.OPENAI_API_KEY
-});
-
-
 console.log(process.env)
 
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  organization: process.env.ORGANIZATION
+});
 
 const uploadfile = function(openai) {
   return openai.createFile(fs.createReadStream("./config/data.jsonl"), "fine-tune");
@@ -47,18 +45,16 @@ const ask = async (prompt) => {
     if (prompt == null) {
       throw new Error("Uh oh, no prompt was provided");
     }
-    const completion = await openai.createCompletion({
+
+    const completion = await openai.completions.create({
       model: "text-davinci-003",
       prompt: prompt,
-      max_tokens: 1024,
-      n: 1,
-      stop: null,
-      temperature: 0.7
+      max_tokens: 50
     });
 
     return {
       success: true,
-      message: completion.data.choices[0].text,
+      message: completion.choices[0].text
     };
 
   } catch (error) {
