@@ -1,13 +1,16 @@
 import express, { json } from "express";
-import { train, ask, uploadFile, retrieve, log } from "./controller/controller.js";
+import { train, ask, createImage, uploadFile, retrieve, log } from "./controller/controller.js";
 import dotenv, { config } from "dotenv";
+import bodyParser from "body-parser";
 import _config from './config/config.json' assert {type: 'json'};
+import cors from 'cors'
 
 dotenv.config();
 
 const app = express();
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
 
 const port = 3000;
 
@@ -18,7 +21,7 @@ app.get("/", async (req, res) => {
 app.get("/uploadFile", async (req, res) => {
   await uploadFile()
 
-  res.status(200).send({s:1});
+  res.status(200).send({s:1});  
 })
 
 app.get("/train", async (req, res) => {
@@ -28,11 +31,26 @@ app.get("/train", async (req, res) => {
 })
 
 app.get("/ask", async (req, res) => {
+  let { query, messages } = req.query;
+
+  log(`ask ${query}`)
+  
+  const response = await ask({
+    messages : messages ?? null,
+    prompt : query
+  })
+
+  log(`reply ${response.message}`)
+
+  res.status(200).send(response);
+})
+
+app.get("/image", async (req, res) => {
   let { query } = req.query;
 
   console.log(`ask ${query}`)
   
-  const response = await ask(query)
+  const response = await createImage(query)
 
   res.status(200).send(response);
 })
