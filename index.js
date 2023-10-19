@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const port = 3000;
+const port = 3001;
 
 app.get("/", async (req, res) => {
   res.status(200).send({ s: 1, r: "all_services_working" });
@@ -31,9 +31,41 @@ app.get("/train", async (req, res) => {
 })
 
 app.get("/ask", async (req, res) => {
-  let { query, messages } = req.query;
+  let { query, prompts, schema } = req.query;
 
   log(`ask ${query}`)
+  
+  const response = await ask({
+    schema : schema,
+    prompts : prompts ?? null,
+    query : query
+  })
+
+  log(`reply ${response.message}`)
+
+  res.status(200).send(response);
+})
+
+app.post("/ask", async (req, res) => {
+  let { query, messages, clearMessages } = req.body;
+
+  log(`ask ${req.body}`)
+  
+  const response = await ask({
+    clearMessages : clearMessages ?? false,
+    messages : messages ?? null,
+    prompt : query
+  })
+
+  log(`reply ${response.message}`)
+
+  res.status(200).send(response);
+})
+
+app.post("/ask", async (req, res) => {
+  let { query, messages } = req.body;
+
+  log(`ask ${req.body}`)
   
   const response = await ask({
     messages : messages ?? null,
