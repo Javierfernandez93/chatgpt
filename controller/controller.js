@@ -121,8 +121,6 @@ const ask = async (data = null) => {
     });
 
     let functionsArray = await getFunctionsBySchema(data);
-
-    console.log(functionsArray)
     
     let options = {
       model: data.processor ? data.process : DEFAULT_PROCESSOR,
