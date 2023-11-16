@@ -148,10 +148,6 @@ const ask = async (data = null) => {
       r: error.message,
     };
   }
-
-  return {
-    s: 0,
-  };
 };
 
 const createImage = async (prompt) => {
