@@ -2,13 +2,12 @@ import _config from "../config/config.json" assert { type: "json" };
 import OpenAI from "openai";
 import dotenv, { config } from "dotenv";
 import fs from "fs";
-import prompts from "../config/prompts.json" assert { type: "json" };
 
 dotenv.config();
 
 const messages = [];
 
-const DEFAULT_PROCESSOR = "gpt-3.5-turbo";
+const DEFAULT_PROCESSOR = "gpt-4";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
