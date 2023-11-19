@@ -2,10 +2,11 @@ import _config from "../config/config.json" assert { type: "json" };
 import OpenAI from "openai";
 import dotenv, { config } from "dotenv";
 import fs from "fs";
+import { User } from "./user.js"
 
 dotenv.config();
 
-let messages = [];
+let users = [];
 
 const DEFAULT_PROCESSOR = "gpt-4";
 
@@ -14,13 +15,35 @@ const openai = new OpenAI({
   organization: process.env.ORGANIZATION,
 });
 
-const appendPrompt = async (prompts = null) => {
-  if (prompts != undefined) {
-    prompts.map((_prompt) => {
-      messages.push(_prompt);
-    });
+// const appendPrompt = async (prompts = null) => {
+//   if (prompts != undefined) {
+//     prompts.map((_prompt) => {
+//       messages.push(_prompt);
+//     });
+//   }
+// };
+
+const existUser = (id) => {
+  return users.find((user) => {
+    return user.getId() == id
+  })
+}
+
+const getUser = (id) => {
+  let user = existUser(id);
+  
+  console.log(user)
+
+  if(!user)
+  {
+    console.error("NEW user")
+    user = new User(id)
+
+    users.push(user);
   }
-};
+
+  return user
+}
 
 const sanitizeOutput = async (choice = null) => {
   if (choice.finish_reason == "stop") {
@@ -39,11 +62,11 @@ const sanitizeOutput = async (choice = null) => {
   }
 };
 
-const appendMessage = async (message = null) => {
-  if (message != undefined) {
-    messages.push(message);
-  }
-};
+// const appendMessage = async (message = null) => {
+//   if (message != undefined) {
+//     messages.push(message);
+//   }
+// };
 
 const getFunctionsBySchema = async (data = null) => {
   if (data.schema != undefined) {
@@ -107,24 +130,38 @@ const ask = async (data = null) => {
     if (data.query == null) {
       throw new Error("Uh oh, no query was provided");
     }
+   
+    if (data.id == null) {
+      throw new Error("Uh oh, no user id was provided");
+    }
+
+    let user = getUser(data.id)
 
     if(data.clearMessages)
     {
-      messages = []
+      user.clearMessages()
+    } else {
+      if(user.isExceded())
+      {
+        console.log("Excedding")
+        user.clearMessages()
+      }
     }
 
-    appendPrompt(data.prompts);
-    appendMessage({
+    user.appendPrompt(data.prompts);
+    user.appendMessage({
       role: "user",
       content: data.query,
     });
 
+    console.log(user)
+    
     let functionsArray = await getFunctionsBySchema(data);
     
     let options = {
       model: data.processor ? data.process : DEFAULT_PROCESSOR,
-      messages: messages,
-      max_tokens: 400
+      messages: user.messages,
+      max_tokens: 1000
     }
     
     options = {...options, ...functionsArray}
@@ -132,11 +169,13 @@ const ask = async (data = null) => {
     const chatCompletion = await openai.chat.completions.create(options);
 
     if (chatCompletion.choices[0].finish_reason == "stop") {
-      appendMessage({
+      user.appendMessage({
         role: "assistant",
         content: chatCompletion.choices[0].message.content,
       });
     }
+    
+    user.total_tokens = chatCompletion.usage.total_tokens
 
     return sanitizeOutput(chatCompletion.choices[0]);
   } catch (error) {

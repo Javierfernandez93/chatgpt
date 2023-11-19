@@ -31,13 +31,14 @@ app.get("/train", async (req, res) => {
 })
 
 app.get("/ask", async (req, res) => {
-  let { query, prompts, schema, clearMessages } = req.query;
+  let { query, prompts, schema, clearMessages, id } = req.query;
 
   log(`GET ask ${query} [clearMessages:${clearMessages}]`)
 
   const response = await ask({
-    clearMessages : clearMessages ?? false,
+    clearMessages : clearMessages && clearMessages == 'true' ? false : false,
     schema : schema,
+    id : id,
     prompts : prompts ?? null,
     query : query
   })
@@ -53,7 +54,7 @@ app.post("/ask", async (req, res) => {
   log(`ask ${query} = clearMessages ${clearMessages}`)
   
   const response = await ask({
-    clearMessages : clearMessages ?? false,
+    clearMessages : clearMessages && clearMessages == 'true' ? false : false,
     messages : messages ?? null,
     prompt : query
   })
