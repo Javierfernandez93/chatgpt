@@ -5,7 +5,7 @@ import fs from "fs";
 
 dotenv.config();
 
-const messages = [];
+let messages = [];
 
 const DEFAULT_PROCESSOR = "gpt-4";
 
