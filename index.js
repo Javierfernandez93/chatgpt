@@ -4,6 +4,7 @@ import dotenv, { config } from "dotenv";
 import bodyParser from "body-parser";
 import _config from './config/config.json' assert {type: 'json'};
 import cors from 'cors'
+import compression from 'compression'
 
 dotenv.config();
 
@@ -11,6 +12,9 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(compression({
+  threshold: 0
+}));
 
 const port = 3001;
 
