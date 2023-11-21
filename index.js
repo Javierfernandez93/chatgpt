@@ -19,19 +19,19 @@ app.use(compression({
 const port = 3001;
 
 app.get("/", async (req, res) => {
-  res.status(200).send({ s: 1, r: "all_services_working" });
+  res.status(200).json({ s: 1, r: "all_services_working" });
 });
 
 app.get("/uploadFile", async (req, res) => {
   await uploadFile()
 
-  res.status(200).send({s:1});  
+  res.status(200).json({s:1});  
 })
 
 app.get("/train", async (req, res) => {
   await train()
 
-  res.status(200).send({s:1});
+  res.status(200).json({s:1});
 })
 
 app.get("/ask", async (req, res) => {
@@ -47,7 +47,7 @@ app.get("/ask", async (req, res) => {
     query : query
   })
 
-  res.status(200).send(response);
+  res.status(200).json(response);
 })
 
 app.post("/ask", async (req, res) => {
@@ -61,7 +61,7 @@ app.post("/ask", async (req, res) => {
     prompt : query
   })
 
-  res.status(200).send(response);
+  res.status(200).json(response);
 })
 
 app.post("/ask", async (req, res) => {
@@ -76,7 +76,7 @@ app.post("/ask", async (req, res) => {
 
   log(`reply ${response.message}`)
 
-  res.status(200).send(response);
+  res.status(200).json(response);
 })
 
 app.get("/image", async (req, res) => {
@@ -86,13 +86,13 @@ app.get("/image", async (req, res) => {
   
   const response = await createImage(query)
 
-  res.status(200).send(response);
+  res.status(200).json(response);
 })
 
 app.get("/retrieve", async (req, res) => {
   const response = await retrieve()
 
-  res.status(200).send(response);
+  res.status(200).json(response);
 })
 
 app.listen(port, () => {
