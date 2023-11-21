@@ -31,12 +31,9 @@ const existUser = (id) => {
 
 const getUser = (id) => {
   let user = existUser(id);
-  
-  console.log(user)
 
   if(!user)
   {
-    console.error("NEW user")
     user = new User(id)
 
     users.push(user);
@@ -153,8 +150,6 @@ const ask = async (data = null) => {
       role: "user",
       content: data.query,
     });
-
-    console.log(user)
     
     let functionsArray = await getFunctionsBySchema(data);
     
