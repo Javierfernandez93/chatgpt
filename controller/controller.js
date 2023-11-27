@@ -8,7 +8,7 @@ dotenv.config();
 
 let users = [];
 
-const DEFAULT_PROCESSOR = "gpt-4";
+const DEFAULT_PROCESSOR = "gpt-3.5-turbo";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
