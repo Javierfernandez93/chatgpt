@@ -51,14 +51,16 @@ app.get("/ask", async (req, res) => {
 })
 
 app.post("/ask", async (req, res) => {
-  let { query, messages, clearMessages } = req.body;
+  let { query, prompts, schema, clearMessages, id } = req.body;
 
   log(`[POST] asking`)
   
   const response = await ask({
     clearMessages : clearMessages && clearMessages == 'true' ? false : false,
-    messages : messages ?? null,
-    prompt : query
+    schema : schema,
+    id : id,
+    prompts : prompts ?? null,
+    query : query
   })
 
   res.status(200).json(response);
