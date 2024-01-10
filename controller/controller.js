@@ -8,7 +8,7 @@ dotenv.config();
 
 let users = [];
 
-const DEFAULT_PROCESSOR = "gpt-3.5-turbo";
+const DEFAULT_PROCESSOR = "gpt-3.5-turbo-1106";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -122,6 +122,7 @@ const getFunctionsBySchema = async (data = null) => {
 
   return [];
 };
+
 const ask = async (data = null) => {
   try {
     if (data.query == null) {
