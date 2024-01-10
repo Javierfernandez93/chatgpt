@@ -1,13 +1,13 @@
 export class User {
   messages = [];
   total_tokens = null;
-  MAX_TOKENS = 16385;
+  MAX_TOKENS = 10000;
   id = null;
   constructor(id) {
     this.id = id;
     this.messages = [];
     this.total_tokens = 0
-    this.MAX_TOKENS = 16385
+    this.MAX_TOKENS = 10000
   }
   setId(id) {
     this.id = id;

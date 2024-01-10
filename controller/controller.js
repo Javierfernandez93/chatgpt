@@ -157,7 +157,7 @@ const ask = async (data = null) => {
     let options = {
       model: data.processor ? data.process : DEFAULT_PROCESSOR,
       messages: user.messages,
-      max_tokens: 16385
+      max_tokens: 10000
     }
     
     options = {...options, ...functionsArray}
@@ -250,7 +250,7 @@ const ask2 = async (prompt) => {
     const completion = await openai.completions.create({
       model: "text-davinci-003",
       prompt: prompt,
-      max_tokens: 16385,
+      max_tokens: 10000,
     });
 
     return {
