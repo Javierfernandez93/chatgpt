@@ -6,7 +6,7 @@ export class User {
   constructor(id) {
     this.id = id;
     this.messages = [];
-    this.create_date = time()
+    this.create_date = Math.ceil(Date.now() / 1000)
     this.total_tokens = 0
     this.MAX_TOKENS = 10000
   }
@@ -17,7 +17,9 @@ export class User {
     return this.id;
   }
   isExceded() {
-    if (time() - this.create_date > 3600) {
+    let now = Math.ceil(Date.now() / 1000)
+    
+    if (now - this.create_date > 3600) {
       return true
     }
 

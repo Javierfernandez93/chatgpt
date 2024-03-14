@@ -177,7 +177,7 @@ const ask = async (data = null) => {
 
     return sanitizeOutput(chatCompletion.choices[0]);
   } catch (error) {
-    console.error(error.message);
+    console.error('error',error.message);
 
     return {
       s: 0,
