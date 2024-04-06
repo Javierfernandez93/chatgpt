@@ -57,6 +57,10 @@ const sanitizeOutput = async (choice = null) => {
       arguments: JSON.parse(choice.message.function_call.arguments),
     };
   }
+
+  return {
+    s: 0,
+  }
 };
 
 // const appendMessage = async (message = null) => {
@@ -67,57 +71,86 @@ const sanitizeOutput = async (choice = null) => {
 
 const getFunctionsBySchema = async (data = null) => {
   if (data.schema != undefined) {
-    return {
-      functions: [
-        {
-          name: "getCity",
-          description: "Toma la ciudad donde vive el usuario",
-          parameters: {
-            type: "object",
-            properties: {
-              city: {
-                type: "string",
-                description: "Ciudad donde vive el usuario",
-              },
-            },
-            required: ["city"],
+    if(data.functionsName = 'readMail')
+    {
+      return {
+        functions: [
+          {
+            name: 'get_messagedata', 
+            description: 'Get message data from email', 
+            parameters: {
+                type: 'object', 
+                properties: {
+                    email_data: {
+                      type: 'array', 
+                      items: {
+                          type: "object",
+                          properties: {
+                              name: { type: "string", description: "Name of person" },
+                              amount: { type: "string", description: "Amount paid" },
+                              payment_status: { type: "string", description: "Payment status" },
+                          }
+                      }
+                  }
+                }, 
+                required: ['email_data']
+            }
           },
-        },
-        {
-          name: "getUserEmail",
-          description: "toma el correo electrónico del usuario",
-          parameters: {
-            type: "object",
-            properties: {
-              email: {
-                type: "string",
-                description: "Correo electrónico proporcionado por el usuario",
+        ],
+      };
+    } else {
+      return {
+        functions: [
+          {
+            name: "getCity",
+            description: "Toma la ciudad donde vive el usuario",
+            parameters: {
+              type: "object",
+              properties: {
+                city: {
+                  type: "string",
+                  description: "Ciudad donde vive el usuario",
+                },
               },
+              required: ["city"],
             },
-            required: ["email"],
           },
-        },
-        {
-          name: "getUserName",
-          description: "toma el nombre del usuario",
-          parameters: {
-            type: "object",
-            properties: {
-              name: {
-                type: "string",
-                description: "nombre proporcionado por el usuario",
+          {
+            name: "getUserEmail",
+            description: "toma el correo electrónico del usuario",
+            parameters: {
+              type: "object",
+              properties: {
+                email: {
+                  type: "string",
+                  description: "Correo electrónico proporcionado por el usuario",
+                },
               },
+              required: ["email"],
             },
-            required: ["name"],
           },
-        },
-        {
-          name: "setFunnel",
-          parameters: data.schema,
-        },
-      ],
-      function_call: "auto",
-    };
+          {
+            name: "getUserName",
+            description: "toma el nombre del usuario",
+            parameters: {
+              type: "object",
+              properties: {
+                name: {
+                  type: "string",
+                  description: "nombre proporcionado por el usuario",
+                },
+              },
+              required: ["name"],
+            },
+          },
+          {
+            name: "setFunnel",
+            parameters: data.schema,
+          },
+        ],
+        function_call: "auto",
+      };
+    }
   }
 
   return [];
@@ -139,6 +172,7 @@ const ask = async (data = null) => {
 
     if(data.clearMessages)
     {
+      console.log("clearingMessages")
       user.clearMessages()
     } else {
       if(user.isExceded())
@@ -210,10 +244,7 @@ const createImage = async (prompt) => {
 };
 
 const uploadfile = function (openai) {
-  return openai.createFile(
-    fs.createReadStream("./config/data.jsonl"),
-    "fine-tune"
-  );
+  return openai.createFile(fs.createReadStream("./config/data.jsonl"),"fine-tune");
 };
 
 const uploadFile = async (data) => {
