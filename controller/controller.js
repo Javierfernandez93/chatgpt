@@ -89,6 +89,7 @@ const getFunctionsBySchema = async (data = null) => {
                               name: { type: "string", description: "Name of person" },
                               amount: { type: "string", description: "Amount paid" },
                               payment_status: { type: "string", description: "Payment status" },
+                              policy_number: { type: "string", description: "Number of policy or contract" },
                           }
                       }
                   }
