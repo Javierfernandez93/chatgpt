@@ -63,12 +63,6 @@ const sanitizeOutput = async (choice = null) => {
   }
 };
 
-// const appendMessage = async (message = null) => {
-//   if (message != undefined) {
-//     messages.push(message);
-//   }
-// };
-
 const getFunctionsBySchema = async (data = null) => {
   if (data.schema != undefined) {
     if(data.functionsName = 'readMail')
