@@ -3,6 +3,9 @@ import OpenAI from "openai";
 import dotenv, { config } from "dotenv";
 import fs from "fs";
 import { User } from "./user.js"
+import readMail from "../models/readMail.js"
+import orderData from "../models/orderData.js"
+import defaultData from "../models/default.js"
 
 dotenv.config();
 
@@ -14,14 +17,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   organization: process.env.ORGANIZATION,
 });
-
-// const appendPrompt = async (prompts = null) => {
-//   if (prompts != undefined) {
-//     prompts.map((_prompt) => {
-//       messages.push(_prompt);
-//     });
-//   }
-// };
 
 const existUser = (id) => {
   return users.find((user) => {
@@ -35,7 +30,6 @@ const getUser = (id) => {
   if(!user)
   {
     user = new User(id)
-
     users.push(user);
   }
 
@@ -64,91 +58,23 @@ const sanitizeOutput = async (choice = null) => {
 };
 
 const getFunctionsBySchema = async (data = null) => {
-  if (data.schema != undefined) {
-    if(data.functionsName = 'readMail')
-    {
-      return {
-        functions: [
-          {
-            name: 'get_messagedata', 
-            description: 'Get message data from email', 
-            parameters: {
-                type: 'object', 
-                properties: {
-                    email_data: {
-                      type: 'array', 
-                      items: {
-                          type: "object",
-                          properties: {
-                              name: { type: "string", description: "Name of person" },
-                              amount: { type: "string", description: "Amount paid" },
-                              payment_status: { type: "string", description: "Payment status" },
-                              policy_number: { type: "string", description: "Number of policy or contract" },
-                          }
-                      }
-                  }
-                }, 
-                required: ['email_data']
-            }
-          },
-        ],
-      };
-    } else {
-      return {
-        functions: [
-          {
-            name: "getCity",
-            description: "Toma la ciudad donde vive el usuario",
-            parameters: {
-              type: "object",
-              properties: {
-                city: {
-                  type: "string",
-                  description: "Ciudad donde vive el usuario",
-                },
-              },
-              required: ["city"],
-            },
-          },
-          {
-            name: "getUserEmail",
-            description: "toma el correo electrónico del usuario",
-            parameters: {
-              type: "object",
-              properties: {
-                email: {
-                  type: "string",
-                  description: "Correo electrónico proporcionado por el usuario",
-                },
-              },
-              required: ["email"],
-            },
-          },
-          {
-            name: "getUserName",
-            description: "toma el nombre del usuario",
-            parameters: {
-              type: "object",
-              properties: {
-                name: {
-                  type: "string",
-                  description: "nombre proporcionado por el usuario",
-                },
-              },
-              required: ["name"],
-            },
-          },
-          {
-            name: "setFunnel",
-            parameters: data.schema,
-          },
-        ],
-        function_call: "auto",
-      };
-    }
+  if (data.schema == undefined) 
+  {
+    return []
   }
 
-  return [];
+  console.log("functionsName",data.functionsName) 
+  console.log("schema",data.schema) 
+
+  if(data.functionsName == 'readMail')
+  {
+    return readMail;
+  } else if(data.functionsName == 'orderData') {
+    console.log("orderData",orderData)
+    return orderData;
+  }
+
+  return defaultData
 };
 
 const ask = async (data = null) => {
@@ -176,6 +102,13 @@ const ask = async (data = null) => {
         user.clearMessages()
       }
     }
+
+    if(data.promptName != null)
+    {
+      data.prompts = loadPromptJson(data.promptName)  
+    }
+
+    console.log("prompts",data.prompts)
 
     user.appendPrompt(data.prompts);
     user.appendMessage({
@@ -249,6 +182,15 @@ const uploadFile = async (data) => {
 
   console.log(response);
 };
+
+const loadPromptJson = (promptName) => {
+  if(!promptName)
+  {
+    return null
+  }
+
+  return JSON.parse(fs.readFileSync(`./public/json/${promptName}.json`));
+}
 
 const train = async (data) => {
   console.log("training");

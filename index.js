@@ -35,7 +35,7 @@ app.get("/train", async (req, res) => {
 })
 
 app.get("/ask", async (req, res) => {
-  let { query, prompts, schema, clearMessages, functionsName, id } = req.query;
+  let { query, promptName, prompts, schema, clearMessages, functionsName, id } = req.query;
 
   log(`[GET] asking ${clearMessages}`)
 
@@ -44,6 +44,7 @@ app.get("/ask", async (req, res) => {
     schema : schema,
     id : id,
     functionsName : functionsName ?? null,
+    promptName : promptName ?? null,
     prompts : prompts ?? null,
     query : query
   })
