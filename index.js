@@ -37,7 +37,9 @@ app.get("/train", async (req, res) => {
 app.get("/ask", async (req, res) => {
   let { query, promptName, prompts, schema, clearMessages, functionsName, id } = req.query;
 
-  log(`[GET] asking ${clearMessages}`)
+  log(`ask: ${clearMessages}`)
+
+  console.log()
 
   const response = await ask({
     clearMessages : clearMessages ?? false,
@@ -53,14 +55,16 @@ app.get("/ask", async (req, res) => {
 })
 
 app.post("/ask", async (req, res) => {
-  let { query, prompts, schema, clearMessages, id } = req.body;
+  let { query, promptName, prompts, schema, clearMessages, functionsName, id } = req.body;
 
   log(`[POST] asking`)
-  
+
   const response = await ask({
-    clearMessages : clearMessages && clearMessages == 'true' ? true : false,
+    clearMessages : clearMessages ?? false,
     schema : schema,
     id : id,
+    functionsName : functionsName ?? null,
+    promptName : promptName ?? null,
     prompts : prompts ?? null,
     query : query
   })
@@ -68,7 +72,7 @@ app.post("/ask", async (req, res) => {
   res.status(200).json(response);
 })
 
-app.post("/ask", async (req, res) => {
+app.get("/ask", async (req, res) => {
   let { query, messages } = req.body;
 
   log(`ask ${req.body}`)

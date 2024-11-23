@@ -89,26 +89,20 @@ const ask = async (data = null) => {
 
     let user = getUser(data.id)
 
-    console.log("total_tokens",user.total_tokens)
+    // console.log("total_tokens",user.total_tokens)
 
     if(data.clearMessages)
     {
-      console.log("clearingMessages")
       user.clearMessages()
     } else {
-      if(user.isExceded())
-      {
-        console.log("Excedding")
+      if(user.isExceded()) {
         user.clearMessages()
       }
     }
 
-    if(data.promptName != null)
-    {
+    if(data.promptName != null) {
       data.prompts = loadPromptJson(data.promptName)  
     }
-
-    console.log("prompts",data.prompts)
 
     user.appendPrompt(data.prompts);
     user.appendMessage({
