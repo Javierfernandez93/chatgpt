@@ -3,3 +3,5 @@ db.json
 package-lock.json
 databases/Creators.json
 databases/User.json
+.env
+.DS_Store

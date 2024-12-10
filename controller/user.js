@@ -39,9 +39,15 @@ export class User {
   };
   appendPrompt =  (prompts = null) => {
     if (prompts != undefined) {
-      prompts.map((_prompt) => {
-        this.messages.push(_prompt);
-      });
+      const systemMessages = this.messages.length > 0 ? this.messages.find((message) => {
+        return message.role == "system";
+      }) : null;
+
+      if(!systemMessages) {
+        prompts.map((_prompt) => {
+          this.messages.push(_prompt);
+        });
+      }
     }
   };
 }
